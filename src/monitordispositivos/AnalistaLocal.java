@@ -6,6 +6,7 @@
 package monitordispositivos;
 
 import InterfazUsuario.Acceso;
+import InterfazUsuario.LogIn;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.ImageIcon;
+import org.inspira.polivoto.AccionesConsultor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import polivoto.networking.IOHandler;
@@ -26,11 +28,16 @@ import polivoto.networking.IOHandler;
  */
 public class AnalistaLocal extends javax.swing.JFrame {
 
-    boolean progreso = true;
-    Cronometro cronometro;
-    RecibirVotos escuchar;
-    int votos = 0;
-    Integer poblacion;
+    private boolean progreso = true;
+    private Cronometro cronometro;
+    private RecibirVotos escuchar;
+    private int votos = 0;
+    private Integer poblacion;
+    private AccionesConsultor accionesConsultor;
+
+    public void setAccionesConsultor(AccionesConsultor accionesConsultor) {
+        this.accionesConsultor = accionesConsultor;
+    }
 
     /**
      * Creates new form Analista_local
@@ -42,7 +49,7 @@ public class AnalistaLocal extends javax.swing.JFrame {
          * Obtener dimensiones de pantalla
          */
         Toolkit t = Toolkit.getDefaultToolkit();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screenSize = t.getScreenSize();
         // System.out.println("Tu resolución es de " + screenSize.width + "x" + screenSize.height);
 
         /*
@@ -91,14 +98,14 @@ public class AnalistaLocal extends javax.swing.JFrame {
             try {
                 ServerSocket server = new ServerSocket(5004);
                 JSONObject json;
-                json = new JSONObject(Acceso.AC.consultaParametrosIniciales());
-                cronometro = new Cronometro(lblhrs, lblmin, lblseg, json.getInt("horas"), json.getInt("minutos"), json.getInt("segundos"), pnl_vota_prog, pnl_vota_fin);
+                json = new JSONObject(accionesConsultor.consultaParametrosIniciales());
+                cronometro = new Cronometro(lblhrs, lblmin, lblseg, json.getLong("tiempo_restante"), pnl_vota_prog, pnl_vota_fin);
                 cronometro.iniciarCronometro();
                 escuchar = new RecibirVotos();
                 poblacion = json.getInt("poblacion");
-                poblacion = new Integer(0);
+                votos = json.getInt("votos");
                 System.out.println("Startup dada: " + json.toString());
-                escuchar.iniciarEscucha(votos - 1, poblacion, lblvotos_totales, lblporcentaje, pnlgrafica, pnl_consultar, pnl_esperar);
+                escuchar.iniciarEscucha(votos, poblacion, lblvotos_totales, lblporcentaje, pnlgrafica, pnl_consultar, pnl_esperar);
 
                 /*
                  * Inicia cronómetro
@@ -119,6 +126,10 @@ public class AnalistaLocal extends javax.swing.JFrame {
                             escuchar.pnl_consulta.setVisible(true);
                             escuchar.pnl_espera.setVisible(false);
                             RecibirVotos.RECIBIENDO = false;
+                            for(int i=0; i<accionesConsultor.getPreguntas().length();i++){
+                                LogIn logIn = new LogIn(i);
+                                logIn.setAccionesConsultor(accionesConsultor);
+                            }
                             break;
                         case 3:
                             poblacion = json.getInt("poblacion");

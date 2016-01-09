@@ -6,7 +6,6 @@
 
 package polivoto.threading;
 
-import InterfazUsuario.Acceso;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.soap.SOAPException;
+import org.inspira.polivoto.AccionesConsultor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import polivoto.networking.SoapClient;
@@ -24,6 +24,12 @@ import polivoto.networking.SoapClient;
  * @author jcapiz
  */
 public class IncommingRequestHandler extends Thread{
+    
+    private AccionesConsultor accionesConsultor;
+
+    public void setAccionesConsultor(AccionesConsultor accionesConsultor) {
+        this.accionesConsultor = accionesConsultor;
+    }
     
     @Override
     public void run(){
@@ -44,7 +50,7 @@ public class IncommingRequestHandler extends Thread{
                         resp = sc.main();
                         break;
                     case 2: // Remote server needs to check out the status of one boleta locally...
-                        resp = Acceso.AC.consultaBoletaRemota(json.getString("boleta"));
+                        resp = accionesConsultor.consultaBoletaRemota(json.getString("boleta"));
                         break;
                     default:
                 }

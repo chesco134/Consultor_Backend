@@ -20,6 +20,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.inspira.devox.security.Hasher;
+import org.inspira.devox.security.MD5Hash;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,7 +72,7 @@ public class AccionesConsultor {
         System.out.println("Done sending secret");
         json = new JSONObject();
         json.put("uName", "Consultor");
-        json.put("psswd", new Hasher().makeHashString(psswd));
+        json.put("psswd", new MD5Hash().makeHash(psswd));
         cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         chunk = cipher.doFinal(json.toString().getBytes());

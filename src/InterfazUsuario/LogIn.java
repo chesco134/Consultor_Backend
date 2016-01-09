@@ -41,19 +41,20 @@ public class LogIn extends javax.swing.JFrame {
      * Creates new form LogIn
      */
     private final int frameId;
-
     private final LinkedList<JPanel> PanelesName = new LinkedList<>();
     private final LinkedList<JPanel> PanelesNumb = new LinkedList<>();
     private final LinkedList<JLabel> EtiquetastxtOpcName = new LinkedList<>();
     private final LinkedList<JLabel> EtiquetastxtOpcNumb = new LinkedList<>();
-    public final LinkedList<Color> colores = new LinkedList<>();
+    private final LinkedList<Color> colores = new LinkedList<>();
+    private AccionesConsultor accionesConsultor;
 
-    public LogIn(JFrame origen, int frameId) {
+    public void setAccionesConsultor(AccionesConsultor accionesConsultor) {
+        this.accionesConsultor = accionesConsultor;
+    }
+
+    public LogIn(int frameId) {
         this.frameId = frameId;
         setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
-        //SelEscuela.setVisible(true);
-        origen.setVisible(false);
         initComponents();
     }
 
@@ -763,7 +764,7 @@ public class LogIn extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 //        try {
 //            System.out.println("I'm frame " + frameId + " and my question is: " +
-//                    Acceso.AC.getPreguntas().getJSONObject(frameId-1).getString("pregunta"));
+//                    accionesConsultor.getPreguntas().getJSONObject(frameId-1).getString("pregunta"));
 //        } catch (JSONException ex) {
 //            Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
 //        }
@@ -773,7 +774,7 @@ public class LogIn extends javax.swing.JFrame {
         PieDataset dataset = crearDataset();
         JFreeChart chart = null;
         try {
-            chart = createChart(dataset, Acceso.AC.getPreguntas().getJSONObject(frameId - 1).getString("pregunta"));
+            chart = createChart(dataset, accionesConsultor.getPreguntas().getJSONObject(frameId - 1).getString("pregunta"));
         } catch (JSONException ex) {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -782,23 +783,23 @@ public class LogIn extends javax.swing.JFrame {
 
         int y = 0;
         try {
-            for (int x = 0; x < Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId-1).getJSONArray("conteo").length(); x++) {
+            for (int x = 0; x < accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").length(); x++) {
                 try {
-                    if (Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId-1).getJSONArray("conteo").getJSONObject(x).getString("reactivo").equals("Anular mi voto")) {
+                    if (accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getString("reactivo").equals("Anular mi voto")) {
                         PanelesName.getLast().setVisible(true);
                         PanelesNumb.getLast().setVisible(true);
                         PanelesName.getLast().setBackground(Color.lightGray);
                         PanelesNumb.getLast().setBackground(Color.lightGray);
                         EtiquetastxtOpcName.getLast().setText("Nulo");
-                        EtiquetastxtOpcNumb.getLast().setText("<html>" + Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getInt("cantidad") + "</html>");
+                        EtiquetastxtOpcNumb.getLast().setText("<html>" + accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getInt("cantidad") + "</html>");
                         y = 1;
                     } else {
                         PanelesName.get(x - y).setVisible(true);
                         PanelesNumb.get(x - y).setVisible(true);
                         PanelesName.get(x - y).setBackground(colores.get(x - y));
                         PanelesNumb.get(x - y).setBackground(colores.get(x - y));
-                        EtiquetastxtOpcName.get(x - y).setText("<html>" + Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getString("reactivo") + "</html>");
-                        EtiquetastxtOpcNumb.get(x - y).setText("<html>" + Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getInt("cantidad") + "</html>");
+                        EtiquetastxtOpcName.get(x - y).setText("<html>" + accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getString("reactivo") + "</html>");
+                        EtiquetastxtOpcNumb.get(x - y).setText("<html>" + accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(x).getInt("cantidad") + "</html>");
 
                     }
                 } catch (JSONException ex) {
@@ -810,7 +811,7 @@ public class LogIn extends javax.swing.JFrame {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            resultadoSuma.setText(Integer.toString(Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes")));
+            resultadoSuma.setText(Integer.toString(accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes")));
         } catch (JSONException ex) {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -821,7 +822,6 @@ public class LogIn extends javax.swing.JFrame {
         //        panelActualizacion4.setVisible(true);
 
         jHoraTxt.setText("<html>Última actualización: " + askDate() + "</html>");
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public String askDate() {
@@ -831,23 +831,23 @@ public class LogIn extends javax.swing.JFrame {
     }
 
     private void pedir_Datos() {
-        Acceso.AC.consultaConteoOpciones();
+        accionesConsultor.consultaConteoOpciones();
     }
 
     private PieDataset crearDataset() {
         DefaultPieDataset datos = new DefaultPieDataset();
         try {
-            if (Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes") == 0) {
+            if (accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes") == 0) {
                 datos.setValue("Sin datos", 0);
             } else {
-                for (int i = 0; i < Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").length(); i++) {
-                    int p = Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getInt("cantidad");
-                    if (Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo").equals("Anular mi voto")) {
+                for (int i = 0; i < accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").length(); i++) {
+                    int p = accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getInt("cantidad");
+                    if (accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo").equals("Anular mi voto")) {
                         //System.out.println(Conteos.get(i)+ "*100/"+total +"=");
                         datos.setValue("Nulo", p);
                     } else {
                         //System.out.println(Conteos.get(i)+ "*100/"+total +"="+ ((Conteos.get(i)*100)/total));
-                        datos.setValue(Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo"), p);
+                        datos.setValue(accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo"), p);
                     }
                 }
             }
@@ -873,14 +873,14 @@ public class LogIn extends javax.swing.JFrame {
 
         plot.setNoDataMessage("Aún no hay votos");
         try {
-            if (Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes") != 0) {
+            if (accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getInt("participantes") != 0) {
                 int j = 0;
-                for (int i = 0; i < Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId-1).getJSONArray("conteo").length(); i++) {
+                for (int i = 0; i < accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").length(); i++) {
                     try {
-                        if (Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId-1).getJSONArray("conteo").getJSONObject(i).getString("reactivo").equals("Anular mi voto")) {
+                        if (accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo").equals("Anular mi voto")) {
                             plot.setSectionPaint("Nulo", Color.lightGray);
                         } else {
-                            plot.setSectionPaint(Acceso.AC.getConteoOpcionesPregunta().getJSONObject(frameId-1).getJSONArray("conteo").getJSONObject(i).getString("reactivo"), colores.get(j));
+                            plot.setSectionPaint(accionesConsultor.getConteoOpcionesPregunta().getJSONObject(frameId - 1).getJSONArray("conteo").getJSONObject(i).getString("reactivo"), colores.get(j));
                             j++;
                         }
                     } catch (JSONException ex) {

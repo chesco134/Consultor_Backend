@@ -39,7 +39,7 @@ public class RecibirVotos {
     JPanel pnl_consulta;
     JPanel pnl_espera;
     
-    public void iniciarEscucha( int votos, double poblacion, JLabel lblvotos_totales, JLabel lblporcentaje,JPanel pnlgrafica, JPanel consulta, JPanel espera ) {
+    public void iniciarEscucha( int votos, double poblacion, JLabel lblvotos_totales, JLabel lblporcentaje, JPanel pnlgrafica, JPanel consulta, JPanel espera ) {
         RECIBIENDO = true;
         this.votos = votos;
         this.lblvotos_totales = lblvotos_totales;
@@ -80,14 +80,13 @@ public class RecibirVotos {
         plot.setOutlineVisible(false);
         plot.setSectionPaint("SI", new Color(0,204,0));
         plot.setSectionPaint("NO", new Color(218,24,24));
+        
         // Crear el Panel del Grafico con ChartPanel
         chartPanel = new ChartPanel(chart);
-        
         chartPanel.setEnabled(false);
         pnlgrafica.setLayout(new java.awt.BorderLayout());
         pnlgrafica.removeAll();
         pnlgrafica.add(chartPanel,BorderLayout.CENTER);
         pnlgrafica.validate();
-        
     }
 }

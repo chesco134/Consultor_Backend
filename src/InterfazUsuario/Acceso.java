@@ -29,11 +29,12 @@ import polivoto.threading.IncommingRequestHandler;
  */
 public class Acceso extends javax.swing.JFrame {
 
-    public static AccionesConsultor AC;
+    private AccionesConsultor accionesConsultor;
+    private IncommingRequestHandler incommingRequestHandler;
+    
     /**
      * Creates new form Results
      */
-    private static LinkedList<String> titulos;
 
     public Acceso() {
         initComponents();
@@ -246,7 +247,6 @@ public class Acceso extends javax.swing.JFrame {
     }//GEN-LAST:event_jButttonIngresarMouseClicked
 
     private void jPwdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPwdKeyTyped
-
         char c = evt.getKeyChar();
         if (c == '\n') {
             String host = jIP.getText();
@@ -255,7 +255,6 @@ public class Acceso extends javax.swing.JFrame {
                 continuar();
             }
         }
-
     }//GEN-LAST:event_jPwdKeyTyped
 
     private void jmItemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmItemSalirActionPerformed
@@ -297,6 +296,7 @@ public class Acceso extends javax.swing.JFrame {
     private void continuar() {
         
         AnalistaLocal analistaLocal = new AnalistaLocal();
+        analistaLocal.setAccionesConsultor(accionesConsultor);
         analistaLocal.init();
         analistaLocal.beginListening();
         dispose();
@@ -318,10 +318,12 @@ public class Acceso extends javax.swing.JFrame {
     private boolean logear_como_Consultor(String host, String pwd) {
         boolean success = false;
         try {
-            AC = new AccionesConsultor(host, pwd);
-            AC.consultaPreguntas();
+            accionesConsultor = new AccionesConsultor(host, pwd);
+            accionesConsultor.consultaPreguntas();
             success = true;
-            new IncommingRequestHandler().start(); // We need to keep track of this object.
+            incommingRequestHandler = new IncommingRequestHandler();
+            incommingRequestHandler.setAccionesConsultor(accionesConsultor);
+            incommingRequestHandler.start(); // We need to keep track of this object.
         } catch (IOException ex) {
             Logger.getLogger(Acceso.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
